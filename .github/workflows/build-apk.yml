@@ -50,7 +50,7 @@ jobs:
               "cleartext": false,
               "errorPath": "offline.html",
               "allowNavigation": [
-                "doorfix-partner.cbabluu414.workers.dev",
+                "doorfix-partner.cbabluu414.workers.dev/",
                 "*.firebaseapp.com",
                 "*.google.com"
               ]
