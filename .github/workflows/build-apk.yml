@@ -46,7 +46,7 @@ jobs:
             "appName": "DoorFix Partner",
             "webDir": "www",
             "server": {
-              "url": "https://doorfix-partner.cbabluu414.workers.dev",
+              "url": "https://doorfix-partner.cbabluu414.workers.dev/",
               "cleartext": false,
               "errorPath": "offline.html",
               "allowNavigation": [
