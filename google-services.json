@@ -51,6 +51,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "737070093041-j7gcf40sid4mrsdo2fj3rt2ap0vdtf6c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.doorfix.partner",
+            "certificate_hash": "8a547a85621c3697025b8d97dc8e8df00bf5d86e"
+          }
+        },
+        {
           "client_id": "737070093041-75f93veum846vrsoul48t3gf653q9bj7.apps.googleusercontent.com",
           "client_type": 3
         }
