@@ -105,10 +105,21 @@ jobs:
               v = open(V).read()
               v = re.sub(r'minSdkVersion\s*=\s*(\d+)', lambda m: 'minSdkVersion = 23' if int(m.group(1)) < 23 else m.group(0), v)
               open(V, 'w').write(v); print('minSdkVersion checked (Google sign-in needs 23+)')
-          if os.path.exists('google-services.json'):
-              shutil.copy('google-services.json', 'android/app/google-services.json'); print('google-services.json found: push notifications ON')
-          else:
-              print('WARNING: google-services.json is missing. The app builds, but push notifications will NOT work.')
+          import json, sys
+          # An APK built without a correct google-services.json CLOSES ITSELF on open (Firebase is missing). So stop here with a clear message.
+          if not os.path.exists('google-services.json'):
+              sys.exit('STOP: google-services.json is missing from the repository root. Add it (Firebase, Project settings, Android app com.doorfix.partner, download), then run again.')
+          try:
+              g = json.load(open('google-services.json'))
+          except Exception as e:
+              sys.exit('STOP: google-services.json is not valid. Open it, select all, and paste the full file again. (' + str(e) + ')')
+          pk = [c.get('client_info', {}).get('android_client_info', {}).get('package_name') for c in g.get('client', [])]
+          if 'com.doorfix.partner' not in pk:
+              sys.exit('STOP: this google-services.json is for ' + str(pk) + ', not com.doorfix.partner. In Firebase add an Android app with the package name com.doorfix.partner and download ITS file.')
+          webc = [o for c in g.get('client', []) if c.get('client_info', {}).get('android_client_info', {}).get('package_name') == 'com.doorfix.partner' for o in c.get('oauth_client', []) if o.get('client_type') == 3]
+          if not webc:
+              sys.exit('STOP: Google sign-in is not set up in this file. In Firebase, Project settings, Android app com.doorfix.partner, Add fingerprint (SHA-1 from the README), then download google-services.json AGAIN and replace it.')
+          shutil.copy('google-services.json', 'android/app/google-services.json'); print('google-services.json OK for com.doorfix.partner')
           EOF_PY
           base64 -d > tools/icon.png <<'EOF_ICON'
           iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAvU0lEQVR42u19aZRcZ3nm83731tab
