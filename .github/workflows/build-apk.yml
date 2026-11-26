@@ -33,7 +33,9 @@ jobs:
               "@capacitor/push-notifications": "^6.0.0",
               "@capacitor/splash-screen": "^6.0.0",
               "@capacitor/status-bar": "^6.0.0",
-              "@capacitor-community/background-geolocation": "^1.2.20"
+              "@capacitor-community/background-geolocation": "^1.2.20",
+              "@capacitor-firebase/authentication": "^6.3.1",
+              "firebase": "^10.14.1"
             },
             "devDependencies": {
               "@capacitor/cli": "^6.2.0"
@@ -46,11 +48,11 @@ jobs:
             "appName": "DoorFix Partner",
             "webDir": "www",
             "server": {
-              "url": "https://doorfix-partner.cbabluu414.workers.dev/",
+              "url": "https://doorfix-partner.cbabluu414.workers.dev",
               "cleartext": false,
               "errorPath": "offline.html",
               "allowNavigation": [
-                "doorfix-partner.cbabluu414.workers.dev/",
+                "doorfix-partner.cbabluu414.workers.dev",
                 "*.firebaseapp.com",
                 "*.google.com"
               ]
@@ -63,7 +65,8 @@ jobs:
             "plugins": {
               "SplashScreen": { "launchShowDuration": 500, "launchAutoHide": true, "backgroundColor": "#FFFFFF", "showSpinner": false, "androidScaleType": "CENTER_INSIDE" },
               "StatusBar": { "style": "LIGHT", "backgroundColor": "#FFFFFF", "overlaysWebView": false },
-              "PushNotifications": { "presentationOptions": ["badge", "sound", "alert"] }
+              "PushNotifications": { "presentationOptions": ["badge", "sound", "alert"] },
+              "FirebaseAuthentication": { "skipNativeAuth": true, "providers": ["google.com"] }
             }
           }
           EOF_CFG
@@ -96,6 +99,12 @@ jobs:
           os.makedirs(res + '/drawable', exist_ok=True)
           shutil.copy('tools/badge.png', res + '/drawable/ic_stat_notify.png')
           print('icons added')
+          import re
+          V = 'android/variables.gradle'
+          if os.path.exists(V):
+              v = open(V).read()
+              v = re.sub(r'minSdkVersion\s*=\s*(\d+)', lambda m: 'minSdkVersion = 23' if int(m.group(1)) < 23 else m.group(0), v)
+              open(V, 'w').write(v); print('minSdkVersion checked (Google sign-in needs 23+)')
           if os.path.exists('google-services.json'):
               shutil.copy('google-services.json', 'android/app/google-services.json'); print('google-services.json found: push notifications ON')
           else:
